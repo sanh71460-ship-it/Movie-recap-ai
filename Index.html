@@ -1,0 +1,267 @@
+
+<!DOCTYPE html>
+<html lang="my">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Movie Recap AI Studio</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#10131c;color:white;font-family:Arial,sans-serif}
+header{background:#1b2130;padding:20px;text-align:center}
+header h1{color:#a797ff;margin:0}
+main{max-width:800px;margin:auto;padding:14px}
+.card{background:#1b2130;border:1px solid #343b50;border-radius:14px;padding:16px;margin:14px 0}
+h2{font-size:18px;color:#c2b8ff}
+label{display:block;margin:12px 0 6px;color:#c5cada}
+input,textarea,select{width:100%;padding:13px;background:#101522;color:white;border:1px solid #454d64;border-radius:9px;font-size:15px}
+textarea{min-height:140px}
+button{padding:12px 15px;margin:5px 3px 5px 0;border:0;border-radius:9px;background:#7865ed;color:white;font-weight:bold}
+.secondary{background:#3a4358}
+video{width:100%;margin-top:12px;border-radius:10px;background:black}
+#result{white-space:pre-wrap;line-height:1.8;overflow-wrap:anywhere}
+.small{font-size:12px;color:#aeb5c8;line-height:1.6}
+#status{color:#c2b8ff}
+</style>
+</head>
+<body>
+
+<header>
+<h1>🎬 Movie Recap AI Studio</h1>
+<p>မြန်မာ Movie Recap ဖန်တီးရေး App</p>
+</header>
+
+<main>
+
+<div class="card">
+<h2>🔑 Gemini API Key</h2>
+<input id="apiKey" type="password" placeholder="Gemini API Key ထည့်ပါ">
+<p class="small">စမ်းသပ်အသုံးပြုရန်သာ။ Public Website ပေါ်တွင် API Key ကို တိုက်ရိုက်မထားပါနှင့်။</p>
+</div>
+
+<div class="card">
+<h2>🎥 Upload Movie Video</h2>
+<input type="file" id="videoFile" accept="video/*">
+<video id="preview" controls hidden></video>
+<p class="small">ဒီနေရာမှာ Video Preview ကြည့်နိုင်ပါတယ်။ Video တစ်ခုတည်းကို အလိုအလျောက်နားလည်တဲ့ Feature မပါသေးပါ။</p>
+</div>
+
+<div class="card">
+<h2>📝 Movie အကြောင်းအရာ</h2>
+<label>Movie Name</label>
+<input id="movie" placeholder="ဇာတ်ကားနာမည်">
+
+<label>ဇာတ်လမ်းအကြောင်းအရာ / Transcript / Subtitle</label>
+<textarea id="story" placeholder="ဇာတ်လမ်းအကြောင်းအရာကို ဒီမှာထည့်ပါ..."></textarea>
+
+<label>Recap ကြာချိန်</label>
+<select id="duration">
+<option>5 မိနစ်</option>
+<option>10 မိနစ်</option>
+<option selected>15 မိနစ်</option>
+<option>30 မိနစ်</option>
+<option>60 မိနစ်</option>
+</select>
+
+<button id="generate" onclick="generateScript()">✨ Script ထုတ်မယ်</button>
+<p id="status"></p>
+</div>
+
+<div class="card">
+<h2>📜 မြန်မာ Recap Script</h2>
+<div id="result">Script ဒီနေရာမှာ ပေါ်လာပါမယ်။</div>
+<button onclick="copyScript()">📋 Copy Script</button>
+<button class="secondary" onclick="downloadScript()">⬇ Download TXT</button>
+</div>
+
+<div class="card">
+<h2>🔊 Voice Over</h2>
+<select id="voice"></select>
+<button onclick="speak()">▶ အသံဖတ်မယ်</button>
+<button class="secondary" onclick="speechSynthesis.cancel()">⏹ ရပ်မယ်</button>
+<p class="small">ဖုန်းတွင်ရရှိနိုင်သော Browser အသံကို သုံးသည်။ မြန်မာအသံရရှိမှုသည် ဖုန်းပေါ်မူတည်သည်။</p>
+</div>
+
+<div class="card">
+<h2>💬 Subtitle Generator</h2>
+<button onclick="makeSRT()">Subtitle ဖန်တီးမယ်</button>
+<button class="secondary" onclick="downloadSRT()">⬇ SRT Download</button>
+<p id="subtitle" class="small"></p>
+</div>
+
+</main>
+
+<script>
+const $=id=>document.getElementById(id);
+let voices=[];
+let srtText="";
+
+function loadVoices(){
+ voices=speechSynthesis.getVoices();
+ $("voice").innerHTML="";
+ voices.forEach((v,i)=>{
+  let option=document.createElement("option");
+  option.value=i;
+  option.textContent=v.name+" ("+v.lang+")";
+  $("voice").appendChild(option);
+ });
+}
+loadVoices();
+speechSynthesis.onvoiceschanged=loadVoices;
+
+$("videoFile").addEventListener("change",function(e){
+ const file=e.target.files[0];
+ if(!file)return;
+ $("preview").src=URL.createObjectURL(file);
+ $("preview").hidden=false;
+});
+
+async function generateScript(){
+ const key=$("apiKey").value.trim();
+ const story=$("story").value.trim();
+ const movie=$("movie").value.trim();
+
+ if(!key)return alert("Gemini API Key ထည့်ပါ");
+ if(!story)return alert("ဇာတ်လမ်းအကြောင်းအရာ ထည့်ပါ");
+
+ $("generate").disabled=true;
+ $("status").textContent="AI Script ရေးနေပါတယ်... ခဏစောင့်ပါ။";
+ $("result").textContent="";
+
+ const prompt=`
+သင်ဟာ Professional မြန်မာ Movie Recap Creator ဖြစ်ပါတယ်။
+
+Movie Name: ${movie}
+Recap ကြာချိန်: ${$("duration").value}
+
+အောက်ပါ ဇာတ်လမ်းအကြောင်းအရာကို အခြေခံပြီး
+သဘာဝကျတဲ့ မြန်မာစကားပြောပုံစံနဲ့
+စိတ်ဝင်စားဖွယ် Movie Recap Script ရေးပေးပါ။
+
+လိုအပ်ချက်များ -
+1. အစမှာ စိတ်ဝင်စားစရာ Hook ထည့်ပါ။
+2. ဇာတ်လမ်းကို အစဉ်လိုက်ရှင်းပြပါ။
+3. ဇာတ်ကောင်တွေရဲ့ အမည်ကို ရှင်းလင်းစွာသုံးပါ။
+4. စာဖတ်သလိုမဟုတ်ဘဲ လူပြောသလိုရေးပါ။
+5. Outro ထည့်ပါ။
+6. မူရင်းဇာတ်လမ်းမှာ မပါတဲ့အချက်တွေ မတီထွင်ပါနဲ့။
+
+ဇာတ်လမ်းအကြောင်းအရာ:
+${story}
+`;
+
+ try{
+  const response=await fetch(
+   "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key="+encodeURIComponent(key),
+   {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+     contents:[{parts:[{text:prompt}]}]
+    })
+   }
+  );
+
+  const data=await response.json();
+
+  if(!response.ok){
+   throw new Error(data.error?.message||"API Error");
+  }
+
+  const answer=data.candidates?.[0]?.content?.parts
+   ?.map(p=>p.text||"").join("\n");
+
+  if(!answer)throw new Error("AI အဖြေမရပါ");
+
+  $("result").textContent=answer;
+  $("status").textContent="✅ Script ထုတ်ပြီးပါပြီ";
+
+ }catch(error){
+  $("status").textContent="❌ "+error.message;
+ }finally{
+  $("generate").disabled=false;
+ }
+}
+
+function copyScript(){
+ const text=$("result").textContent;
+ if(!text)return;
+ navigator.clipboard.writeText(text)
+ .then(()=>alert("Copy လုပ်ပြီးပါပြီ"))
+ .catch(()=>alert("Copy မရပါ။ စာသားကို ဖိပြီး Copy လုပ်ပါ။"));
+}
+
+function downloadFile(name,content,type){
+ const blob=new Blob([content],{type:type});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement("a");
+ a.href=url;
+ a.download=name;
+ a.click();
+ setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
+function downloadScript(){
+ const text=$("result").textContent;
+ if(!text)return alert("Script မရှိသေးပါ");
+ downloadFile("movie-recap-script.txt",text,"text/plain;charset=utf-8");
+}
+
+function speak(){
+ const text=$("result").textContent;
+ if(!text||text.includes("ဒီနေရာမှာ"))
+ return alert("Script အရင်ထုတ်ပါ");
+
+ speechSynthesis.cancel();
+
+ const utterance=new SpeechSynthesisUtterance(text);
+ const voice=voices[Number($("voice").value)];
+
+ if(voice){
+  utterance.voice=voice;
+  utterance.lang=voice.lang;
+ }
+
+ utterance.rate=0.9;
+ speechSynthesis.speak(utterance);
+}
+
+function makeSRT(){
+ const text=$("result").textContent.trim();
+
+ if(!text||text.includes("ဒီနေရာမှာ"))
+ return alert("Script အရင်ထုတ်ပါ");
+
+ const sentences=text.split(/[။!?]\s*/).filter(Boolean);
+ let output="";
+ let time=0;
+
+ sentences.forEach((sentence,index)=>{
+  const start=time;
+  const duration=Math.max(3,Math.ceil(sentence.length/12));
+  time+=duration;
+
+  output+=(index+1)+"\n";
+  output+=stamp(start)+" --> "+stamp(time)+"\n";
+  output+=sentence+"။\n\n";
+ });
+
+ srtText=output;
+ $("subtitle").textContent=sentences.length+" ခု Subtitle ဖန်တီးပြီးပါပြီ။";
+}
+
+function stamp(seconds){
+ const h=Math.floor(seconds/3600);
+ const m=Math.floor((seconds%3600)/60);
+ const s=seconds%60;
+ return [h,m,s].map(n=>String(n).padStart(2,"0")).join(":")+",000";
+}
+
+function downloadSRT(){
+ if(!srtText)return alert("Subtitle အရင်ဖန်တီးပါ");
+ downloadFile("movie-recap.srt",srtText,"text/plain;charset=utf-8");
+}
+</script>
+
+</body>
+</html>
