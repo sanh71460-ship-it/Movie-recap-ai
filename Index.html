@@ -3,59 +3,63 @@
 <html lang="my">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101321">
 <title>Movie Recap AI Studio</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#10131c;color:white;font-family:Arial,sans-serif}
-header{background:#1b2130;padding:20px;text-align:center}
-header h1{color:#a797ff;margin:0}
-main{max-width:800px;margin:auto;padding:14px}
-.card{background:#1b2130;border:1px solid #343b50;border-radius:14px;padding:16px;margin:14px 0}
-h2{font-size:18px;color:#c2b8ff}
-label{display:block;margin:12px 0 6px;color:#c5cada}
-input,textarea,select{width:100%;padding:13px;background:#101522;color:white;border:1px solid #454d64;border-radius:9px;font-size:15px}
-textarea{min-height:140px}
-button{padding:12px 15px;margin:5px 3px 5px 0;border:0;border-radius:9px;background:#7865ed;color:white;font-weight:bold}
-.secondary{background:#3a4358}
-video{width:100%;margin-top:12px;border-radius:10px;background:black}
-#result{white-space:pre-wrap;line-height:1.8;overflow-wrap:anywhere}
-.small{font-size:12px;color:#aeb5c8;line-height:1.6}
-#status{color:#c2b8ff}
+body{margin:0;background:#101321;color:#fff;font-family:Arial,sans-serif}
+header{padding:22px 15px;background:#1c2033;text-align:center;border-bottom:1px solid #383e58}
+header h1{color:#a99aff;font-size:24px;margin:0}
+header p{color:#aeb4c9;font-size:13px}
+main{max-width:850px;margin:auto;padding:13px}
+.card{background:#1b2032;border:1px solid #353c55;border-radius:15px;padding:16px;margin-bottom:15px}
+h2{font-size:17px;color:#c0b5ff;margin:0 0 14px}
+label{display:block;font-size:13px;color:#c5cbe0;margin:12px 0 6px}
+input,textarea,select{width:100%;padding:13px;background:#111626;color:#fff;border:1px solid #444d69;border-radius:9px;font-size:15px}
+textarea{min-height:130px;resize:vertical;line-height:1.6}
+button{padding:12px 15px;border:0;border-radius:9px;background:#7967ef;color:white;font-weight:bold;margin:5px 3px 5px 0}
+button.secondary{background:#3b455e}
+button:disabled{opacity:.5}
+video{width:100%;margin-top:12px;background:#000;border-radius:10px}
+#result{white-space:pre-wrap;line-height:1.9;overflow-wrap:anywhere}
+#status{font-size:13px;color:#c4baff;line-height:1.6}
+.small{font-size:12px;color:#aab2c9;line-height:1.7}
 </style>
 </head>
 <body>
 
 <header>
-<h1>🎬 Movie Recap AI Studio</h1>
-<p>မြန်မာ Movie Recap ဖန်တီးရေး App</p>
+<h1>🎬 MOVIE RECAP AI</h1>
+<p>Myanmar Movie Recap Creator Studio</p>
 </header>
 
 <main>
 
 <div class="card">
-<h2>🔑 Gemini API Key</h2>
-<input id="apiKey" type="password" placeholder="Gemini API Key ထည့်ပါ">
-<p class="small">စမ်းသပ်အသုံးပြုရန်သာ။ Public Website ပေါ်တွင် API Key ကို တိုက်ရိုက်မထားပါနှင့်။</p>
+<h2>🔑 Gemini AI Settings</h2>
+<label>Gemini API Key</label>
+<input id="api" type="password" placeholder="Paste your Gemini API Key">
+<p class="small">API Key ကို Website ထဲမှာ တိုက်ရိုက်ထည့်သုံးတာက Public Website အတွက် မလုံခြုံပါ။ ကိုယ်တိုင်စမ်းသပ်ဖို့သာ အသုံးပြုပါ။</p>
 </div>
 
 <div class="card">
-<h2>🎥 Upload Movie Video</h2>
-<input type="file" id="videoFile" accept="video/*">
-<video id="preview" controls hidden></video>
-<p class="small">ဒီနေရာမှာ Video Preview ကြည့်နိုင်ပါတယ်။ Video တစ်ခုတည်းကို အလိုအလျောက်နားလည်တဲ့ Feature မပါသေးပါ။</p>
+<h2>🎥 Upload Movie</h2>
+<input id="movieFile" type="file" accept="video/*">
+<video id="video" controls hidden></video>
+<p class="small">Video Preview ကြည့်နိုင်ပါတယ်။ ဒီ Version က Video တစ်ခုလုံးကို အလိုအလျောက် နားလည်ပြီး Script ထုတ်တာ မဟုတ်ပါ။</p>
 </div>
 
 <div class="card">
-<h2>📝 Movie အကြောင်းအရာ</h2>
+<h2>📝 Movie Information</h2>
 <label>Movie Name</label>
-<input id="movie" placeholder="ဇာတ်ကားနာမည်">
+<input id="movieName" placeholder="ဇာတ်ကားနာမည်">
 
-<label>ဇာတ်လမ်းအကြောင်းအရာ / Transcript / Subtitle</label>
-<textarea id="story" placeholder="ဇာတ်လမ်းအကြောင်းအရာကို ဒီမှာထည့်ပါ..."></textarea>
+<label>ဇာတ်လမ်းအကြောင်းအရာ / Transcript</label>
+<textarea id="story" placeholder="ဇာတ်လမ်းအကြောင်းအရာ၊ Subtitle သို့မဟုတ် Transcript ကို ဒီမှာထည့်ပါ..."></textarea>
 
-<label>Recap ကြာချိန်</label>
-<select id="duration">
+<label>Script ကြာချိန်</label>
+<select id="length">
 <option>5 မိနစ်</option>
 <option>10 မိနစ်</option>
 <option selected>15 မိနစ်</option>
@@ -63,92 +67,132 @@ video{width:100%;margin-top:12px;border-radius:10px;background:black}
 <option>60 မိနစ်</option>
 </select>
 
-<button id="generate" onclick="generateScript()">✨ Script ထုတ်မယ်</button>
+<label>Script Style</label>
+<select id="style">
+<option>စိတ်လှုပ်ရှားဖွယ် Movie Recap</option>
+<option>ရိုးရှင်းပြီး နားလည်လွယ်သောပုံစံ</option>
+<option>Professional YouTube Narration</option>
+<option>Suspense နှင့် Mystery ပုံစံ</option>
+</select>
+
+<button id="generate" onclick="generate()">✨ AI Script ထုတ်မယ်</button>
 <p id="status"></p>
 </div>
 
 <div class="card">
-<h2>📜 မြန်မာ Recap Script</h2>
-<div id="result">Script ဒီနေရာမှာ ပေါ်လာပါမယ်။</div>
-<button onclick="copyScript()">📋 Copy Script</button>
-<button class="secondary" onclick="downloadScript()">⬇ Download TXT</button>
+<h2>📜 Myanmar Recap Script</h2>
+<div id="result">သင့် Script ဒီနေရာမှာ ပေါ်လာပါမယ်။</div>
+<button onclick="copyText()">📋 Copy</button>
+<button class="secondary" onclick="saveText()">⬇ Download TXT</button>
 </div>
 
 <div class="card">
 <h2>🔊 Voice Over</h2>
+<label>ဖုန်းမှာ ရနိုင်တဲ့ အသံ</label>
 <select id="voice"></select>
+<label>အသံအမြန်နှုန်း</label>
+<select id="rate">
+<option value="0.8">နှေးနှေး</option>
+<option value="0.9" selected>ပုံမှန်</option>
+<option value="1">မြန်</option>
+</select>
 <button onclick="speak()">▶ အသံဖတ်မယ်</button>
-<button class="secondary" onclick="speechSynthesis.cancel()">⏹ ရပ်မယ်</button>
-<p class="small">ဖုန်းတွင်ရရှိနိုင်သော Browser အသံကို သုံးသည်။ မြန်မာအသံရရှိမှုသည် ဖုန်းပေါ်မူတည်သည်။</p>
+<button class="secondary" onclick="stopVoice()">⏹ ရပ်မယ်</button>
+<p class="small">မြန်မာအသံ မရနိုင်တဲ့ ဖုန်းများလည်း ရှိပါတယ်။ ဒီ Feature က Browser အသံကို အသုံးပြုပါတယ်။</p>
 </div>
 
 <div class="card">
 <h2>💬 Subtitle Generator</h2>
-<button onclick="makeSRT()">Subtitle ဖန်တီးမယ်</button>
-<button class="secondary" onclick="downloadSRT()">⬇ SRT Download</button>
-<p id="subtitle" class="small"></p>
+<button onclick="createSubtitle()">Subtitle ဖန်တီးမယ်</button>
+<button class="secondary" onclick="saveSubtitle()">⬇ SRT Download</button>
+<p id="subStatus" class="small">Script မှ Subtitle ဖန်တီးနိုင်ပါတယ်။ အချိန်များသည် ခန့်မှန်းတန်ဖိုးများဖြစ်ပါတယ်။</p>
+</div>
+
+<div class="card">
+<h2>📱 Video Format Guide</h2>
+<select id="ratio">
+<option>9:16 - TikTok / Shorts</option>
+<option>16:9 - YouTube</option>
+<option>1:1 - Square Video</option>
+</select>
+<select id="quality">
+<option>720p</option>
+<option>1080p</option>
+</select>
+<p class="small">ဒီနေရာမှာ Format နဲ့ Quality ရွေးချယ်နိုင်ပါတယ်။ တကယ် Video ပြောင်းလဲပြီး Export လုပ်ဖို့ Video Processing Engine ထပ်လိုအပ်ပါတယ်။</p>
 </div>
 
 </main>
 
 <script>
-const $=id=>document.getElementById(id);
-let voices=[];
-let srtText="";
+const el=id=>document.getElementById(id);
+let voiceList=[];
+let subtitleData="";
 
 function loadVoices(){
- voices=speechSynthesis.getVoices();
- $("voice").innerHTML="";
- voices.forEach((v,i)=>{
-  let option=document.createElement("option");
+ voiceList=speechSynthesis.getVoices();
+ el("voice").innerHTML="";
+ voiceList.forEach((v,i)=>{
+  const option=document.createElement("option");
   option.value=i;
-  option.textContent=v.name+" ("+v.lang+")";
-  $("voice").appendChild(option);
+  option.textContent=v.name+" - "+v.lang;
+  el("voice").appendChild(option);
  });
 }
 loadVoices();
 speechSynthesis.onvoiceschanged=loadVoices;
 
-$("videoFile").addEventListener("change",function(e){
+el("movieFile").addEventListener("change",e=>{
  const file=e.target.files[0];
  if(!file)return;
- $("preview").src=URL.createObjectURL(file);
- $("preview").hidden=false;
+ const video=el("video");
+ video.src=URL.createObjectURL(file);
+ video.hidden=false;
 });
 
-async function generateScript(){
- const key=$("apiKey").value.trim();
- const story=$("story").value.trim();
- const movie=$("movie").value.trim();
+async function generate(){
+ const key=el("api").value.trim();
+ const story=el("story").value.trim();
 
- if(!key)return alert("Gemini API Key ထည့်ပါ");
- if(!story)return alert("ဇာတ်လမ်းအကြောင်းအရာ ထည့်ပါ");
+ if(!key){alert("Gemini API Key ထည့်ပေးပါ");return}
+ if(!story){alert("ဇာတ်လမ်းအကြောင်းအရာ ထည့်ပေးပါ");return}
 
- $("generate").disabled=true;
- $("status").textContent="AI Script ရေးနေပါတယ်... ခဏစောင့်ပါ။";
- $("result").textContent="";
+ const movie=el("movieName").value.trim();
+ const length=el("length").value;
+ const style=el("style").value;
 
  const prompt=`
-သင်ဟာ Professional မြန်မာ Movie Recap Creator ဖြစ်ပါတယ်။
+သင်သည် Professional Myanmar Movie Recap Script Writer ဖြစ်သည်။
 
-Movie Name: ${movie}
-Recap ကြာချိန်: ${$("duration").value}
+ဇာတ်ကားအမည်: ${movie}
+လိုချင်သောကြာချိန်: ${length}
+ရေးသားပုံ: ${style}
 
-အောက်ပါ ဇာတ်လမ်းအကြောင်းအရာကို အခြေခံပြီး
-သဘာဝကျတဲ့ မြန်မာစကားပြောပုံစံနဲ့
-စိတ်ဝင်စားဖွယ် Movie Recap Script ရေးပေးပါ။
+အောက်ပါ ဇာတ်လမ်းအကြောင်းအရာကို အခြေခံ၍ မြန်မာဘာသာဖြင့်
+YouTube Movie Recap Script ရေးပေးပါ။
 
-လိုအပ်ချက်များ -
-1. အစမှာ စိတ်ဝင်စားစရာ Hook ထည့်ပါ။
-2. ဇာတ်လမ်းကို အစဉ်လိုက်ရှင်းပြပါ။
-3. ဇာတ်ကောင်တွေရဲ့ အမည်ကို ရှင်းလင်းစွာသုံးပါ။
-4. စာဖတ်သလိုမဟုတ်ဘဲ လူပြောသလိုရေးပါ။
-5. Outro ထည့်ပါ။
-6. မူရင်းဇာတ်လမ်းမှာ မပါတဲ့အချက်တွေ မတီထွင်ပါနဲ့။
+ဖွဲ့စည်းပုံ:
+1. စိတ်ဝင်စားစရာ Hook
+2. ဇာတ်လမ်းအစ
+3. အဓိကဇာတ်ကွက်များ
+4. အရေးကြီးသောအလှည့်အပြောင်း
+5. ဇာတ်သိမ်း
+6. Outro
 
-ဇာတ်လမ်းအကြောင်းအရာ:
+လိုအပ်ချက်:
+- လူပြောသလို သဘာဝကျကျရေးပါ။
+- နားထောင်ရလွယ်ကူပါစေ။
+- ဇာတ်လမ်းအချက်အလက်ကို မတီထွင်ပါနှင့်။
+- လိုအပ်သောနေရာတွင် စာပိုဒ်ခွဲပါ။
+- အဖြေကို မြန်မာဘာသာဖြင့်သာ ရေးပါ။
+
+ဇာတ်လမ်း:
 ${story}
 `;
+
+ el("generate").disabled=true;
+ el("status").textContent="AI Script ရေးနေပါတယ်။ ခဏစောင့်ပါ...";
+ el("result").textContent="";
 
  try{
   const response=await fetch(
@@ -173,22 +217,26 @@ ${story}
 
   if(!answer)throw new Error("AI အဖြေမရပါ");
 
-  $("result").textContent=answer;
-  $("status").textContent="✅ Script ထုတ်ပြီးပါပြီ";
+  el("result").textContent=answer;
+  el("status").textContent="✅ Script အောင်မြင်စွာ ထုတ်ပြီးပါပြီ။";
 
  }catch(error){
-  $("status").textContent="❌ "+error.message;
+  el("status").textContent="❌ Error: "+error.message;
  }finally{
-  $("generate").disabled=false;
+  el("generate").disabled=false;
  }
 }
 
-function copyScript(){
- const text=$("result").textContent;
+function copyText(){
+ const text=el("result").textContent;
  if(!text)return;
- navigator.clipboard.writeText(text)
- .then(()=>alert("Copy လုပ်ပြီးပါပြီ"))
- .catch(()=>alert("Copy မရပါ။ စာသားကို ဖိပြီး Copy လုပ်ပါ။"));
+ if(navigator.clipboard){
+  navigator.clipboard.writeText(text)
+   .then(()=>alert("Copy လုပ်ပြီးပါပြီ"))
+   .catch(()=>alert("စာသားကို ဖိပြီး Copy လုပ်ပါ"));
+ }else{
+  alert("စာသားကို ဖိပြီး Copy လုပ်ပါ");
+ }
 }
 
 function downloadFile(name,content,type){
@@ -198,70 +246,66 @@ function downloadFile(name,content,type){
  a.href=url;
  a.download=name;
  a.click();
- setTimeout(()=>URL.revokeObjectURL(url),1000);
+ setTimeout(()=>URL.revokeObjectURL(url),1500);
 }
 
-function downloadScript(){
- const text=$("result").textContent;
+function saveText(){
+ const text=el("result").textContent;
  if(!text)return alert("Script မရှိသေးပါ");
- downloadFile("movie-recap-script.txt",text,"text/plain;charset=utf-8");
+ downloadFile("Myanmar-Movie-Recap.txt",text,"text/plain;charset=utf-8");
 }
 
 function speak(){
- const text=$("result").textContent;
- if(!text||text.includes("ဒီနေရာမှာ"))
- return alert("Script အရင်ထုတ်ပါ");
-
- speechSynthesis.cancel();
-
- const utterance=new SpeechSynthesisUtterance(text);
- const voice=voices[Number($("voice").value)];
-
- if(voice){
-  utterance.voice=voice;
-  utterance.lang=voice.lang;
+ const text=el("result").textContent;
+ if(!text||text.includes("ဒီနေရာမှာ")){
+  alert("Script အရင်ထုတ်ပါ");return;
  }
-
- utterance.rate=0.9;
- speechSynthesis.speak(utterance);
+ speechSynthesis.cancel();
+ const u=new SpeechSynthesisUtterance(text);
+ const v=voiceList[Number(el("voice").value)];
+ if(v){u.voice=v;u.lang=v.lang}
+ u.rate=Number(el("rate").value);
+ speechSynthesis.speak(u);
 }
 
-function makeSRT(){
- const text=$("result").textContent.trim();
-
- if(!text||text.includes("ဒီနေရာမှာ"))
- return alert("Script အရင်ထုတ်ပါ");
-
- const sentences=text.split(/[။!?]\s*/).filter(Boolean);
- let output="";
- let time=0;
-
- sentences.forEach((sentence,index)=>{
-  const start=time;
-  const duration=Math.max(3,Math.ceil(sentence.length/12));
-  time+=duration;
-
-  output+=(index+1)+"\n";
-  output+=stamp(start)+" --> "+stamp(time)+"\n";
-  output+=sentence+"။\n\n";
- });
-
- srtText=output;
- $("subtitle").textContent=sentences.length+" ခု Subtitle ဖန်တီးပြီးပါပြီ။";
+function stopVoice(){
+ speechSynthesis.cancel();
 }
 
 function stamp(seconds){
  const h=Math.floor(seconds/3600);
  const m=Math.floor((seconds%3600)/60);
- const s=seconds%60;
+ const s=Math.floor(seconds%60);
  return [h,m,s].map(n=>String(n).padStart(2,"0")).join(":")+",000";
 }
 
-function downloadSRT(){
- if(!srtText)return alert("Subtitle အရင်ဖန်တီးပါ");
- downloadFile("movie-recap.srt",srtText,"text/plain;charset=utf-8");
+function createSubtitle(){
+ const text=el("result").textContent.trim();
+ if(!text||text.includes("ဒီနေရာမှာ")){
+  alert("Script အရင်ထုတ်ပါ");return;
+ }
+ const lines=text.split(/[။!?]\s*/).filter(x=>x.trim());
+ let time=0;
+ subtitleData="";
+ lines.forEach((line,i)=>{
+  const duration=Math.max(3,Math.ceil(line.length/12));
+  subtitleData+=(i+1)+"\n";
+  subtitleData+=stamp(time)+" --> "+stamp(time+duration)+"\n";
+  subtitleData+=line.trim()+"။\n\n";
+  time+=duration;
+ });
+ el("subStatus").textContent=lines.length+" ခု Subtitle ဖန်တီးပြီးပါပြီ။";
+}
+
+function saveSubtitle(){
+ if(!subtitleData){
+  alert("Subtitle အရင်ဖန်တီးပါ");return;
+ }
+ downloadFile("Myanmar-Subtitle.srt",subtitleData,"text/plain;charset=utf-8");
 }
 </script>
 
 </body>
 </html>
+
+  
